@@ -1,0 +1,154 @@
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>冒泡排序</title>
+	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<script src="./bubbleSort.js"></script>
+</head>
+
+<body>
+	<div id="main-svg">
+	</div>
+
+
+</body>
+<script>
+	
+	function drawBar(virtualArr) {
+		var swap = virtualArr.swap;
+		var dataset = virtualArr.arr;
+
+		var width = 800,
+			height = 400,
+			padding = {
+				top: 10,
+				right: 40,
+				bottom: 40,
+				left: 40
+			};
+
+		var svg = d3.select("#main-svg")
+			.append('svg')
+			.attr('width', width + 'px')
+			.attr('height', height + 'px');
+
+		
+		//x轴的比例尺
+		var xScale = d3.scale.ordinal()
+			.domain(d3.range(dataset.length))
+			.rangeRoundBands([0, width - padding.left - padding.right]);
+
+		//y轴的比例尺
+		var yScale = d3.scale.linear()
+			.domain([0, d3.max(dataset)])
+			.range([height - padding.top - padding.bottom, 0]);
+
+
+		//定义x轴
+		var xAxis = d3.svg.axis()
+			.scale(xScale)
+			.orient("bottom");
+
+		//定义y轴
+		var yAxis = d3.svg.axis()
+			.scale(yScale)
+			.orient("left");
+
+		//矩形之间的空白
+		var rectPadding = 4;
+
+		//添加矩形元素
+		var rects = svg.selectAll(".MyRect")
+			.data(dataset)
+			.enter()
+			.append("rect")
+			.attr("class", "MyRect")
+			.attr("transform", "translate(" + padding.left + "," + padding.top + ")")
+			.attr("x", function (d, i) {
+				return xScale(i) + rectPadding / 2;
+			})
+			.attr("y", function (d) {
+				if (d==null) {
+					return 0;
+				}
+				return yScale(d);
+			})
+			.attr("width", xScale.rangeBand() - rectPadding)
+			.attr("height", function (d) {
+				var v = 0;
+				if (d != null) {
+					v = yScale(d);
+				}
+				return height - padding.top - padding.bottom - v;
+			})
+			.attr("fill", function(d,i) {
+				if (swap.indexOf(i) != -1) {
+					return "red";
+				}
+				return "blue";
+			});
+
+		//添加文字元素
+		var texts = svg.selectAll(".MyText")
+			.data(dataset)
+			.enter()
+			.append("text")
+			.attr("class", "MyText")
+			.attr("transform", "translate(" + padding.left + "," + padding.top + ")")
+			.attr("x", function (d, i) {
+				return xScale(i) + rectPadding / 2;
+			})
+			.attr("y", function (d) {
+				if (d==null) {
+					return 0;
+				}
+				return yScale(d);
+			})
+			.attr("dx", function () {
+				return (xScale.rangeBand() - rectPadding) / 2;
+			})
+			.attr("dy", function (d) {
+				return 20;
+			})
+			.text(function (d) {
+				return d;
+			})
+			.style({
+				"fill": "#FFF",
+				"text-anchor": "middle"
+			});
+
+		//添加x轴
+		svg.append("g")
+			.attr("class", "axis")
+			.attr("transform", "translate(" + padding.left + "," + (height - padding.bottom) + ")")
+			.call(xAxis);
+
+		//添加y轴
+		svg.append("g")
+			.attr("class", "axis")
+			.attr("transform", "translate(" + padding.left + "," + padding.top + ")")
+			.call(yAxis);
+	}
+	
+
+	//排序数组
+	var array = [2,6,7,8,5,7,2,4];
+	var time = 500; //多久执行一次排序
+	//获取执行过程快照
+	var virtualArr=bubbleSort(array);
+	var len = 0;
+	var timer = setInterval(function() {
+	
+		if (len == virtualArr.length) {
+			clearInterval(timer);
+		} else {
+			d3.select("#main-svg").select('svg').remove();
+			drawBar(virtualArr[len]);
+		}
+		len++;
+	},time);
+</script>
+
+</html>
