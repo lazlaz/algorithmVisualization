@@ -1,8 +1,10 @@
 
 
 function bubbleSort(arr){
-    // virtualArr 用来存放 每一个步内容的数组
+    //start
     var virtualArr = [];
+	//end
+	 
     var length = arr.length;
     for(var i=0;i<length;i++){
         for(var j=0;j<length-i-1;j++){
@@ -17,10 +19,16 @@ function bubbleSort(arr){
 
                
             }
+			//start
             meta.swap = [j,j+1];
             meta.arr = arr.slice();
+			//end
+			
             virtualArr.push(meta);
         }
     }
+	
+	//start
     return virtualArr;
+	//end
 }
