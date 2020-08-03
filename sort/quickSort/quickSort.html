@@ -2,9 +2,9 @@
 
 <head>
 	<meta charset="utf-8">
-	<title>冒泡排序</title>
+	<title>快速排序</title>
 	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-	<script src="./bubbleSort.js"></script>
+	<script src="./quickSort.js"></script>
 </head>
 
 <body>
@@ -83,7 +83,7 @@
 				return height - padding.top - padding.bottom - v;
 			})
 			.attr("fill", function(d,i) {
-				if (swap!=null && swap.indexOf(i) != -1) {
+				if (swap!=null &&  swap.indexOf(i) != -1) {
 					return "red";
 				}
 				return "blue";
@@ -137,9 +137,11 @@
 	var array = [2,6,7,8,5,7,2,4];
 	var time = 1000; //多久执行一次排序
 	//获取执行过程快照
-	var virtualArr=bubbleSort(array);
+	var virtualArr=quickSort(array);
+	console.log(virtualArr);
 	var len = 0;
 	var timer = setInterval(function() {
+	
 		if (len == virtualArr.length) {
 			clearInterval(timer);
 		} else {

@@ -27,7 +27,8 @@ function bubbleSort(arr){
             virtualArr.push(meta);
         }
     }
-	
+    
+    virtualArr.push({arr:arr});
 	//start
     return virtualArr;
 	//end
