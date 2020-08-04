@@ -1,4 +1,4 @@
-function binarySearch(arr, target) {
+function interpolationSearch(arr, target) {
   //用来进行可视化跟踪
   var virtualArr = [];
 
@@ -9,8 +9,7 @@ function binarySearch(arr, target) {
   var l = 0;
   var r = arr.length - 1;
   while (l <= r) {
-    var mid = Math.floor((l + r) / 2);
-
+    var mid = Math.floor(l+(target-arr[l])/(arr[r]-arr[l])*(r-l));
     var meta = {};
     meta.arr = arr;
     meta.range = [l, r];
