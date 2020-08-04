@@ -1,0 +1,193 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>二叉树</title>
+    <script src="../../lib/d3.v4.min.js" charset="utf-8"></script>
+    <script src="./binaryTree.js"></script>
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <button onclick="preorderTraversalBtn()">先序遍历</button>
+    <button onclick="infixOderTraversalBtn()">中序遍历</button>
+    <button onclick="postOderTraversalBtn()">后续遍历</button>
+    <button onclick="levelTraversalBtn()">层次遍历</button>
+    <div id="main-svg">
+    </div>
+
+</body>
+<script>
+
+    function drawTree(data, virtualArr) {
+        var width = 800;
+        var height = 400;
+        var dataset = data;
+        console.log(dataset);
+        var _Hierarchydata = d3.hierarchy(dataset, function (d) { return d.children; }) //数据        
+
+        var _Tree = d3.tree()  //树
+
+            .size([width, height]);
+
+        var _Tree_Data = _Tree(_Hierarchydata);
+
+        var _Node_Data = _Tree_Data.descendants();//节点数据
+
+        var _Tree_Link = _Tree_Data.links();//连线数据
+
+
+        var _Svg = d3.select("#main-svg")
+            .append('svg')
+            .attr('width', width * 2 + 'px')
+            .attr('height', height * 2 + 'px');
+        var _Links = _Svg.selectAll("line")
+
+            .data(_Tree_Link)
+
+            .enter()
+
+            .append("line")
+
+            .attr("x1", function (d) { return d.source.x + 11; })
+
+            .attr("y1", function (d) { return d.source.y + 30; })
+
+            .attr("x2", function (d) { return d.target.x + 13; })
+
+            .attr("y2", function (d) { return d.target.y + 2; })
+
+            .style("stroke", function(d,i) {
+                if (virtualArr != null) {
+                    //判断数组中是否有一个满足条件，若有返回true，否则返回false
+                    var flag =  virtualArr.some(function (cur, index, arr) {
+                        return cur.id == d.target.data.id;
+                    })
+                    if (flag) {
+                        return "red";
+                    }
+
+                }
+                return "#ccc";
+            });
+
+        var _G = _Svg.selectAll('g')
+
+            .data(_Node_Data)
+
+            .enter()
+
+            .append('g')
+
+            .append('circle')
+            .attr("r", 20)
+            .style("fill", function (d, i) {
+                if (virtualArr != null) {
+                    //判断数组中是否有一个满足条件，若有返回true，否则返回false
+                    var flag =  virtualArr.some(function (cur, index, arr) {
+                        return cur.id == d.data.id;
+                    })
+                    if (flag) {
+                        return "red";
+                    }
+
+                }
+                return 'blue';
+            })
+
+            .attr('cx', function (d) { return d.x + 10; })
+
+            .attr('cy', function (d) { return d.y + 20; })
+
+
+
+        //text元素，用来显示文字  其中var _G = _svg.selectAll('g')必须要重新写一遍，不用使用_G.append('text')，会导致数据不显示。
+
+        var _G = _Svg.selectAll('g')
+
+            .enter()
+
+            .append('text').data(_Node_Data).enter().append('text')
+
+            .attr('x', function (d) { return d.x + 5; })
+
+            .attr('y', function (d) { return d.y + 25; })
+
+            .text(function (d, i) {
+
+                return d.data.value;
+
+            })
+
+            .attr('fill', 'white')
+    }
+    function convertD3TreeData(tree) {
+        if (tree == null) {
+            return;
+        }
+        var dataset = {};
+        dataset.value = tree.value + "";
+        dataset.id = tree.id + "";
+        var children = [];
+        dataset.children = children;
+        var left = convertD3TreeData(tree.left);
+        if (left != null) {
+            children.push(left)
+        }
+        var right = convertD3TreeData(tree.right);
+        if (right != null) {
+            children.push(right)
+        }
+        return dataset;
+    }
+    var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    var tree = createBinaryTree(arr);
+    console.log(tree);
+    var d3TreeData = convertD3TreeData(tree);
+    console.log(d3TreeData);
+    drawTree(d3TreeData);
+
+    function preorderTraversalBtn() {
+        var virtualArr = preorderTraversal(tree);
+        console.log(virtualArr);
+        drawTreeTimer(d3TreeData, virtualArr);
+    }
+    function infixOderTraversalBtn() {
+        var virtualArr = infixOderTraversal(tree);
+        console.log(virtualArr);
+        drawTreeTimer(d3TreeData, virtualArr);
+    }
+    function postOderTraversalBtn() {
+        var virtualArr = postOderTraversal(tree);
+        console.log(virtualArr);
+        drawTreeTimer(d3TreeData, virtualArr);
+    }
+    function levelTraversalBtn() {
+        var virtualArr = levelTraversal(tree);
+        console.log(virtualArr);
+        drawTreeTimer(d3TreeData, virtualArr);
+    }
+
+    var timer = null;
+    function drawTreeTimer(d3TreeData, virtualArr) {
+        if (timer != null) {
+            clearInterval(timer);
+        }
+        var len = 0;
+        timer = setInterval(function () {
+
+            if (len == virtualArr.length) {
+                clearInterval(timer);
+            } else {
+                d3.select("#main-svg").select('svg').remove();
+                drawTree(d3TreeData, virtualArr.slice(0, len+1));
+            }
+            len++;
+        }, 1000);
+    }
+
+</script>
+
+</html>
