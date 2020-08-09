@@ -1,0 +1,217 @@
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>捅排序</title>
+  <script src="../../lib/d3.min.js" charset="utf-8"></script>
+  <script src="../../lib/jquery-1.10.2.min.js"></script>
+  <script src="./bucketSort.js"></script>
+  <style>
+    #bucket {
+      position: relative;
+      top:10px;
+    }
+    .bucketEle {
+      border: 1px solid hsl(0, 100%, 50%);
+      padding: 1px;
+    }
+  </style>
+</head>
+
+<body>
+  数组：<input id="data" /> 格式：1,2,3,4,5,6,7,8,14,16,18,20,21,22
+	
+	<button onclick="generateData()">开始</button>
+	<div id="main-svg">
+	</div>
+
+  <span>捅数组</span>
+  <div id="bucket">
+    
+
+  </div>
+
+</body>
+<script>
+    function initBucket(bucketList) {
+      var bucket = $("#bucket");
+
+      for (var i=0;bucketList!=null&&i<bucketList.length;i++) {
+        var html = "<div><span>"+i+":</span>";
+        for (var j=0;bucketList[i]!=null && j<bucketList[i].length; j++) {
+          html+="<span class='bucketEle'>"+bucketList[i][j]+"</span>";
+        
+        }
+        html+="</div>";
+        bucket.append(html);
+      }
+    }
+		function generateData() {
+		var data = document.getElementById("data");
+	
+		if (data != null) {
+			var array = data.value.split(",").map(Number);
+		
+				timerExe(array);
+		
+			
+		}
+	}
+	function drawBar(virtualArr) {
+		var swap = virtualArr.swap;
+		var dataset = virtualArr.arr;
+
+		var width = 800,
+			height = 400,
+			padding = {
+				top: 10,
+				right: 40,
+				bottom: 40,
+				left: 40
+			};
+
+		var svg = d3.select("#main-svg")
+			.append('svg')
+			.attr('width', width + 'px')
+			.attr('height', height + 'px');
+
+		
+		//x轴的比例尺
+		var xScale = d3.scale.ordinal()
+			.domain(d3.range(dataset.length))
+			.rangeRoundBands([0, width - padding.left - padding.right]);
+
+		//y轴的比例尺
+		var yScale = d3.scale.linear()
+			.domain([0, d3.max(dataset)])
+			.range([height - padding.top - padding.bottom, 0]);
+
+
+		//定义x轴
+		var xAxis = d3.svg.axis()
+			.scale(xScale)
+			.orient("bottom");
+
+		//定义y轴
+		var yAxis = d3.svg.axis()
+			.scale(yScale)
+			.orient("left");
+
+		//矩形之间的空白
+		var rectPadding = 4;
+
+		//添加矩形元素
+		var rects = svg.selectAll(".MyRect")
+			.data(dataset)
+			.enter()
+			.append("rect")
+			.attr("class", "MyRect")
+			.attr("transform", "translate(" + padding.left + "," + padding.top + ")")
+			.attr("x", function (d, i) {
+				return xScale(i) + rectPadding / 2;
+			})
+			.attr("y", function (d) {
+				if (d==null) {
+					return 0;
+				}
+				return yScale(d);
+			})
+			.attr("width", xScale.rangeBand() - rectPadding)
+			.attr("height", function (d) {
+				var v = 0;
+				if (d != null) {
+					v = yScale(d);
+				}
+				return height - padding.top - padding.bottom - v;
+			})
+			.attr("fill", function(d,i) {
+				if (swap!=null && swap.indexOf(i) != -1) {
+					return "red";
+				}
+				return "blue";
+			});
+
+		//添加文字元素
+		var texts = svg.selectAll(".MyText")
+			.data(dataset)
+			.enter()
+			.append("text")
+			.attr("class", "MyText")
+			.attr("transform", "translate(" + padding.left + "," + padding.top + ")")
+			.attr("x", function (d, i) {
+				return xScale(i) + rectPadding / 2;
+			})
+			.attr("y", function (d) {
+				if (d==null) {
+					return 0;
+				}
+				return yScale(d);
+			})
+			.attr("dx", function () {
+				return (xScale.rangeBand() - rectPadding) / 2;
+			})
+			.attr("dy", function (d) {
+				return 20;
+			})
+			.text(function (d) {
+				return d;
+			})
+			.style({
+				"fill": "#FFF",
+				"text-anchor": "middle"
+			});
+
+		//添加x轴
+		svg.append("g")
+			.attr("class", "axis")
+			.attr("transform", "translate(" + padding.left + "," + (height - padding.bottom) + ")")
+			.call(xAxis);
+
+		//添加y轴
+		svg.append("g")
+			.attr("class", "axis")
+			.attr("transform", "translate(" + padding.left + "," + padding.top + ")")
+			.call(yAxis);
+	}
+	
+  function init() {
+		//排序数组
+		var array = [9,5,4,3,3,2,1];
+
+		timerExe(array);
+	}
+	var timer =  null;
+	function timerExe(array) {
+		if (timer!=null) {
+			clearInterval(timer);
+		}
+		var time = 1000; //多久执行一次排序
+		//获取执行过程快照
+		var virtualArr = bucketSort(array);
+		console.log(virtualArr);
+		var len = 0;
+		timer = setInterval(function () {
+
+			if (len == virtualArr.length) {
+				clearInterval(timer);
+			} else {
+				d3.select("#main-svg").select('svg').remove();
+        drawBar(virtualArr[len]);
+
+        var bucket = $("#bucket");
+      
+        var childs = bucket.children(); 
+        for(var i = 0; i < childs.length; i++) { 
+          childs[i].remove();
+        }
+   
+        var bucketList = virtualArr[len].bucketList;
+        initBucket(bucketList);
+			}
+			len++;
+		}, time);
+	}
+	init();
+</script>
+
+</html>
