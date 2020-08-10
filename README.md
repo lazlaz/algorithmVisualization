@@ -12,5 +12,6 @@
 ### [插入排序](http://htmlpreview.github.io/?https://github.com/lazlaz/algorithmVisualization/blob/master/sort/insertionSort/insertionSort.html)
 ### [希尔排序](http://htmlpreview.github.io/?https://github.com/lazlaz/algorithmVisualization/blob/master/sort/shellSort/shellSort.html)
 ### [鸡尾酒排序](http://htmlpreview.github.io/?https://github.com/lazlaz/algorithmVisualization/blob/master/sort/cocktailSort/cocktailSort.html)
+### [桶排序](http://htmlpreview.github.io/?https://github.com/lazlaz/algorithmVisualization/blob/master/sort/bucketSort/bucketSort.html)
 ## 数据结构
 ### [二叉树](http://htmlpreview.github.io/?https://github.com/lazlaz/algorithmVisualization/blob/master/datastructure/binaryTree/binaryTree.html)
