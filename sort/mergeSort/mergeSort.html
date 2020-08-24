@@ -2,10 +2,10 @@
 
 <head>
 	<meta charset="utf-8">
-	<title>计数排序</title>
+	<title>归并排序</title>
 	<script src="../../lib/d3.min.js" charset="utf-8"></script>
 	<script src="../../lib/jquery-1.10.2.min.js"></script>
-	<script src="./countSort.js"></script>
+	<script src="./mergeSort.js"></script>
 	<style>
 		#bucket {
 			position: relative;
@@ -35,23 +35,13 @@
 	<div id="main-svg">
 	</div>
 
-	<span>原始数组</span>
-	<div id="orginal">
+
+	<div id="mergerSort">
 
 
 	</div>
 
-	<span>计数数组</span>
-	<div id="count">
 
-
-	</div>
-
-	<span>排序数组</span>
-	<div id="sort">
-
-
-	</div>
 
 </body>
 <script>
@@ -67,38 +57,26 @@
 
 		}
 	}
-	function createArrShow(arr, dom,index) {
+	function createArrShow(arr,start,end,dom) {
 
 		var html = "<div>";
-		for (var j = 0; arr != null && j < arr.length; j++) {
-			if (index == j) {
-				html += "<span class='bucketEle' style='background:red'>" + arr[j] + "</span>";
-			} else {
-				html += "<span class='bucketEle'>" + arr[j] + "</span>";
-			}
-			
-
+		for (var j = start; arr != null && j <= end; j++) {
+			html += "<span class='bucketEle' style='background:red'>" + arr[j] + "</span>";
 		}
 		html += "</div>";
 		dom.append(html);
 	}
 	function drawBar(virtualArr) {
-		var orginal = $("#orginal");
-		var orginalArr = virtualArr.orginalArr;
-		createArrShow(orginalArr, orginal,virtualArr.orginalIndex);
-
-		var count = $("#count");
-		var countArr = virtualArr.countArr;
-		createArrShow(countArr, count,virtualArr.countIndex);
-
-		var sort = $("#sort");
-		var sortArr = virtualArr.sortArr;
-		createArrShow(sortArr, sort,virtualArr.sortIndex);
+		var arr = virtualArr.arr;
+		var start = virtualArr.start;
+		var end = virtualArr.end;
+		var dom = $("#mergerSort");
+		createArrShow(arr,start,end,dom);
 	}
 
 	function init() {
 		//排序数组
-		var array = [9, 5, 4, 3, 3, 2, 1];
+		var array = [9, 5, 3, 2, 1,4, 3,55 ];
 
 		timerExe(array);
 	}
@@ -109,7 +87,7 @@
 		}
 		var time = 1000; //多久执行一次排序
 		//获取执行过程快照
-		var virtualArr = countSort(array);
+		var virtualArr = mergeSort(array);
 		console.log(virtualArr);
 		var len = 0;
 		timer = setInterval(function () {
@@ -117,16 +95,7 @@
 			if (len == virtualArr.length) {
 				clearInterval(timer);
 			} else {
-				//清除以前结果
-
-				var doms = ["#orginal","#count","#sort"];
-				for (var i=0;i<doms.length;i++) {
-					var node = $(""+doms[i]);
-					var childs = node.children();
-					for (var j = 0; j < childs.length; j++) {
-						childs[j].remove();
-					}
-				}
+				
 				drawBar(virtualArr[len]);
 
 			}
