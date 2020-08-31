@@ -15,5 +15,7 @@
 ### [桶排序](http://htmlpreview.github.io/?https://github.com/lazlaz/algorithmVisualization/blob/master/sort/bucketSort/bucketSort.html)
 ### [计数排序](http://htmlpreview.github.io/?https://github.com/lazlaz/algorithmVisualization/blob/master/sort/countSort/countSort.html)
 ### [归并排序](http://htmlpreview.github.io/?https://github.com/lazlaz/algorithmVisualization/blob/master/sort/mergeSort/mergeSort.html)
+### [选择排序](http://htmlpreview.github.io/?https://github.com/lazlaz/algorithmVisualization/blob/master/sort/selectSort/selectSort.html)
+### [梳排序](http://htmlpreview.github.io/?https://github.com/lazlaz/algorithmVisualization/blob/master/sort/combSort/combSort.html)
 ## 数据结构
 ### [二叉树](http://htmlpreview.github.io/?https://github.com/lazlaz/algorithmVisualization/blob/master/datastructure/binaryTree/binaryTree.html)
