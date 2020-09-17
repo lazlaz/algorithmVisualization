@@ -1,0 +1,129 @@
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Astar搜索(图）</title>
+	<script src="../../lib/d3.min.js" charset="utf-8"></script>
+	<script src="../../lib/jquery-1.10.2.min.js" charset="utf-8"></script>
+	<script src="../../lib/Utils.js"></script>
+	<script src="./AstarSearch.js"></script>
+	<style>
+		td {
+			text-align: center;
+		}
+	</style>
+</head>
+
+<body>
+	随机生成图大小：<input id="data" />
+
+	<button onclick="generateData()">开始</button>
+
+	<div id="main-svg">
+		<table id="tableData" border="1">
+
+
+		</table>
+	</div>
+
+
+</body>
+<script>
+	function randomGenerate() {
+		var arr = ['#', 'o', 'o', 'o', 'o', 'o'];
+		return arr[Math.floor((Math.random() * 6))];
+	}
+	function generateData() {
+		var data = $("#data").val();
+		if (data == null || data == "") {
+			data = 10;
+		} else {
+			data = parseInt(data);
+		}
+		var table = $("#tableData");
+		table.empty();
+		var dataArr = [];
+		for (var i = 0; i < data; i++) {
+			var arr = [];
+			for (var j = 0; j < data; j++) {
+				arr.push(randomGenerate());
+			}
+			dataArr.push(arr);
+		}
+		//随机生成起点和终点
+		dataArr[Math.floor((Math.random() * data))][Math.floor((Math.random() * data))] = 'S';
+		dataArr[Math.floor((Math.random() * data))][Math.floor((Math.random() * data))] = 'E';
+		for (var i = 0; i < data; i++) {
+			var $trTemp = $("<tr></tr>");
+			for (var j = 0; j < data; j++) {
+				if (dataArr[i][j] == 'S') {
+					$trTemp.append("<td width='20px' style='background-color:red'>" + dataArr[i][j] + "</td>");
+				} else if (dataArr[i][j] == 'E') {
+					$trTemp.append("<td width='20px' style='background-color:green'>" + dataArr[i][j] + "</td>");
+				} else if (dataArr[i][j] == '#') {
+					$trTemp.append("<td width='20px' style='background-color:#463f3f'>" + dataArr[i][j] + "</td>");
+				} else {
+					$trTemp.append("<td width='20px'>" + dataArr[i][j] + "</td>");
+				}
+
+			}
+			$trTemp.appendTo("#tableData");
+		}
+
+		var visitedS = aStarSearch(dataArr);
+
+		var timer = null;
+		function timerExe() {
+			if (timer != null) {
+				clearInterval(timer);
+			}
+			var time = 100; //多久执行一次排序
+
+			var len = 0;
+			timer = setInterval(function () {
+
+				if (len == visitedS.length) {
+					clearInterval(timer);
+				} else {
+					var ret = visitedS[len];
+					var visited = ret.visited;
+					var path = ret.path;
+					var arr = deepCopy(dataArr);
+					table.empty();
+					for (var i = 0; i < data; i++) {
+						var $trTemp = $("<tr></tr>");
+						for (var j = 0; j < data; j++) {
+							if (containes2(path, i, j) && arr[i][j] != 'E' && arr[i][j] != 'S') {
+								arr[i][j] = '*';
+							}
+							if (arr[i][j] == 'S') {
+								$trTemp.append("<td width='20px' style='background-color:red'>" + arr[i][j] + "</td>");
+							} else if (arr[i][j] == 'E') {
+								$trTemp.append("<td width='20px' style='background-color:green'>" + arr[i][j] + "</td>");
+							} else if (dataArr[i][j] == '#') {
+								$trTemp.append("<td width='20px' style='background-color:#463f3f'>" + dataArr[i][j] + "</td>");
+							} else if (containes2(visited, i, j)) {
+								arr
+								if (arr[i][j] == '*') {
+									$trTemp.append("<td width='20px' style='background-color:red'>" + arr[i][j] + "</td>");
+								} else {
+									$trTemp.append("<td width='20px' style='background-color:yellow'>" + arr[i][j] + "</td>");
+								}
+
+							} else {
+								$trTemp.append("<td width='20px'>" + arr[i][j] + "</td>");
+							}
+						}
+						$trTemp.appendTo("#tableData");
+					}
+				}
+				len++;
+			}, time);
+		}
+
+		timerExe();
+	}
+
+</script>
+
+</html>
